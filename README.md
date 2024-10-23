@@ -1,70 +1,108 @@
-# LLM Recommender System
+# LLM-Powered Book Recommender System
 
-## Overview
+## Project Overview
 
-This repository contains the code, data, and methodology used to build an advanced recommendation system leveraging Large Language Models (LLMs) and traditional collaborative filtering techniques. The project predicts how users would rate books they haven’t reviewed yet, enhancing user experience by offering personalized recommendations.
+This repository contains a comprehensive implementation of a **Hybrid Book Recommender System**, combining **Collaborative Filtering** and **Content-Based Filtering** approaches, with the integration of **Large Language Models (LLMs)** for text processing. The primary goal is to enhance user experience by providing personalized book recommendations based on user ratings and review content.
 
-The system adopts a hybrid approach:
-- **Collaborative Filtering**: Recommends books based on user-item interaction patterns.
-- **Content-Based Filtering with LLMs**: Uses LLMs to process user reviews, generating semantic embeddings to enhance recommendation accuracy.
+![Llama Recommender System](img.jpg "Llama Recommender System")
 
-This hybrid approach combines the personalization strength of collaborative filtering with the language understanding capabilities of LLMs.
+### Key Features
+- **Collaborative Filtering**: Recommends books by identifying patterns in user-item interactions (matrix factorization with SVD).
+- **Content-Based Filtering with LLMs**: Uses LLM-generated text embeddings to recommend books based on the semantic similarity of reviews.
+- **Scalable Summarization**: If sufficient computational power is available, review summaries are generated per book using the latest **LLaMA** model (Llama 3.2 1B), offering an additional level of granularity for the content-based model.
+
+This hybrid system leverages the strengths of both collaborative and content-based techniques, providing a robust and scalable recommendation pipeline for book reviews.
+
+---
 
 ## Key Achievements
 
-- Collaborative filtering model RMSE: **0.94**
-- Content-based filtering model RMSE: **0.69**
-- LLM-powered review vectorization enables deeper understanding of user preferences.
+- **Collaborative Filtering** RMSE: **0.94**
+- **Content-Based Filtering** RMSE (LLM embeddings): **0.69**
+- Optional **LLaMA**-based review summarization for more granular recommendations.
+- Scalable data processing pipeline with dynamic dataset creation and storage.
 
 ---
 
 ## Dataset
 
-The dataset is sourced from Kaggle and contains detailed **Amazon book reviews**. This dataset is tailored to the book category, making it ideal for building a recommendation system in the domain of literature.
+The dataset used in this project is a subset of the **Amazon Book Reviews** dataset sourced from **Kaggle**. This dataset contains rich review information, including user ratings, review text, and product details, making it ideal for building both collaborative and content-based recommendation models.
 
 ### Dataset Details
 
 - **Total Rows**: 3,105,370 (subsampled for this project)
-- **Number of Features**: 15
-- **Domain**: Books
-- **Columns**:
+- **Features**: 15
+- **Key Columns**:
   - `customer_id`: Unique identifier for each customer.
   - `product_id`: Unique identifier for each book.
-  - `star_rating`: The rating given by the user (1-5 stars).
-  - `review_headline` and `review_body`: Textual content from the reviews.
+  - `product_title`: Title of the book.
+  - `star_rating`: User rating (1-5 stars).
+  - `review_headline` and `review_body`: User review content.
+  - `helpful_votes` and `total_votes`: Feedback on review helpfulness.
 
-The rich textual data makes it a good fit for natural language processing tasks, which are key for extracting meaningful insights and generating vectors through LLMs.
+The reviews are preprocessed, vectorized using LLMs, and utilized in the content-based filtering model to provide recommendations. Additionally, collaborative filtering predicts user ratings based on interaction patterns with other users.
 
-You can download the dataset from [Kaggle](https://www.kaggle.com/datasets/beaglelee/amazon-reviews-us-books-v1-02-tsv-zip).
-
----
-
-## LLM Integration
-
-In this project, Large Language Models (LLMs) play a critical role in the **content-based filtering** part of the recommendation system. We leverage models like **BERT** and **GPT** to process user reviews, extracting meaningful semantic embeddings that reflect the content and sentiment of the reviews.
-
-### Steps in LLM Integration:
-
-1. **Review Preprocessing**: Cleaning, tokenizing, and preparing reviews for the LLM.
-2. **Embedding Generation**: Passing each review through an LLM to generate a vector representation.
-3. **Similarity Computation**: Calculating the similarity between books based on their LLM-generated embeddings to improve recommendation accuracy.
-
-By using LLMs, we gain a deeper understanding of user preferences, resulting in more accurate and personalized recommendations.
+Original dataset available on [Kaggle](https://www.kaggle.com/datasets/beaglelee/amazon-reviews-us-books-v1-02-tsv-zip).
 
 ---
 
-## Project Structure (Main Files and Folders)
+## Main Notebook: `recommender_new.ipynb`
+
+The primary focus of this project is the `recommender_new.ipynb` notebook, which outlines the development of the hybrid recommendation system. The notebook walks through the following key steps:
+
+### 1. **Data Preprocessing**
+   - Loading and cleaning the Amazon reviews dataset.
+   - Grouping reviews by `product_id` and aggregating ratings to compute an average star rating per book.
+   - Tokenization and vectorization of review text using LLMs, converting the textual content into dense semantic vectors for content-based filtering.
+
+### 2. **Collaborative Filtering**
+   - Using **Singular Value Decomposition (SVD)** to decompose the user-item interaction matrix.
+   - Predicting user ratings for unseen books based on patterns of user behavior.
+   - Evaluation using **Root Mean Squared Error (RMSE)** for accuracy, achieving a score of **0.94**.
+
+### 3. **Content-Based Filtering**
+   - Generating semantic embeddings from user reviews using a pre-trained **transformer model** (e.g., BERT or GPT).
+   - Calculating similarities between books based on the textual content of reviews.
+   - Recommendations are made by suggesting books that have similar content and sentiment to books the user has already rated.
+   - Evaluation using RMSE, achieving a significant improvement over collaborative filtering with an RMSE of **0.69**.
+
+### 4. **Hybrid Model**
+   - Combining the collaborative filtering model with content-based filtering to create a hybrid recommender system.
+   - The hybrid model leverages both user interaction patterns and semantic content from reviews to offer more personalized and accurate recommendations.
+
+### Output:
+   - A **dynamic pipeline** that saves processed datasets, including user-item interaction data and LLM-processed review embeddings, to the `data/` folder for efficient re-use.
+
+---
+
+## Optional Notebook: `llama_review_summarization.ipynb`
+
+This notebook is an **additional feature** for environments with sufficient computational power. It demonstrates how to use **LLaMA** to summarize reviews for each book and generate more concise review text. These summaries can be used in place of or alongside the original review content in the content-based filtering model.
+
+### Key Steps:
+1. **Review Aggregation**: Aggregating multiple reviews per book.
+2. **Summarization with LLaMA**: Using the LLaMA model to summarize the review text into shorter, more meaningful summaries.
+3. **Embedding Generation**: Vectorizing the summarized reviews and saving them as `summarized_book_reviews_sampled_llama.csv`.
+4. **Optional Use in Recommender**: These summarized reviews can be substituted into the content-based filtering pipeline for potentially faster processing and improved accuracy.
+
+**Output**:
+   - A file `data/summarized_book_reviews_sampled_llama.csv` that contains the summarized reviews, which can be used in place of full review text.
+
+---
+
+## Project Structure
 
 ```
-├── data/                             # Contains data files for the project
+├── data/                             # Contains dynamically saved data files
 │   ├── amazon_reviews_subset.csv      # Subset of Amazon reviews used in this project
-│   ├── summarized_review.csv          # Summarized reviews data for content-based filtering
-│   └── vectorized_data.csv            # Vectorized review data used in model input
+│   ├── summarized_book_reviews_sampled_llama.csv  # Summarized reviews by LLaMA
+│   ├── vectorized_data.csv            # Vectorized review data used in model input
+│   ├── summarized_review.csv            # Summarized review data used in model input
 │
-├── mds-learning-material/             # Supporting materials used during development
-│
-├── recommender_new.ipynb              # Jupyter notebook containing all model experiments and development
-├── .gitignore                         # Git ignore file
+├── recommender_new.ipynb              # Main notebook for hybrid recommender development
+├── llama_review_summarization.ipynb   # Optional notebook for summarizing reviews with LLaMA
+├── config.json                        # Configuration file for Hugging Face token
+├── environment.yml                    # Environment dependencies file
 ├── LICENSE                            # License information
 └── README.md                          # Project documentation (this file)
 ```
@@ -77,8 +115,7 @@ By using LLMs, we gain a deeper understanding of user preferences, resulting in 
 
 - Python 3.8+
 - Conda (Anaconda or Miniconda)
-  
-To set up the environment for this project, we are using a `environment.yml` file that lists all the necessary dependencies, including LLM-related libraries.
+- Hugging Face account for access to pre-trained models
 
 ### Installation Steps
 
@@ -103,83 +140,56 @@ conda activate recommender_system
 
 4. **Download the dataset** from Kaggle and place it in the `data/` folder.
 
-5. **Run the Jupyter notebook**:
+5. **Add Hugging Face Token** to the `config.json` file:
+   
+   ```json
+   {
+     "hf_token": "your_token_from_hugging_face"
+   }
+   ```
 
-```bash
-jupyter notebook recommender_new.ipynb
-```
+6. **Run the notebooks**:
+
+   - For building the hybrid recommender:
+   
+     ```bash
+     jupyter notebook recommender_new.ipynb
+     ```
+
+   - For review summarization (optional):
+   
+     ```bash
+     jupyter notebook llama_review_summarization.ipynb
+     ```
 
 ---
 
 ## Model Development
 
 ### 1. **Collaborative Filtering**
-
-We applied collaborative filtering to predict a user’s rating of a book based on the ratings from similar users. Matrix factorization techniques, like Singular Value Decomposition (SVD), were used to identify latent factors.
-
-**Key Metrics**:
-- RMSE: **0.94**
+   - Uses matrix factorization (SVD) to predict a user’s rating based on ratings from similar users.
+   - RMSE: **0.94**
 
 ### 2. **Content-Based Filtering with LLMs**
-
-The content-based filtering model uses review text embeddings generated by LLMs (such as BERT). These embeddings capture semantic relationships between books, allowing for more contextually relevant recommendations.
-
-**Key Metrics**:
-- RMSE: **0.69**
+   - LLM-generated embeddings are used to calculate similarities between books.
+   - RMSE: **0.69**
 
 ### 3. **Hybrid Model**
-
-Combining collaborative filtering with content-based filtering results in a hybrid recommendation system, providing a balance between user behavior and content similarity.
-
----
-
-## Usage
-
-You can explore the `recommender_new.ipynb` notebook, which covers:
-- **Data exploration and preprocessing**
-- **Collaborative filtering implementation**
-- **LLM-based content filtering**
-- **Combining models for hybrid recommendations**
-
-The notebook provides code and explanations for how to replicate the model development process.
-
----
-
-## Environment Configuration (environment.yml)
-
-The project environment is defined in `environment.yml` and includes the following key dependencies:
-
-```yaml
-name: recommender_system
-channels:
-  - defaults
-  - conda-forge
-dependencies:
-  - python=3.8
-  - pandas
-  - numpy
-  - scikit-learn
-  - jupyterlab
-  - pip
-  - pip:
-    - transformers  # for LLMs like BERT
-```
-
-### Installing the Environment
-
-To set up the project environment, use:
-
-```bash
-conda env create -f environment.yml
-```
-
-This will ensure all the required dependencies are installed, including those related to LLMs, making it easy to replicate the environment on other machines.
+   - The hybrid model combines collaborative filtering and content-based filtering for enhanced accuracy and personalization.
 
 ---
 
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+
+---
+
+## Contributors
+
+- **MoNorouzi23** - [GitHub Profile](https://github.com/MoNorouzi23)
+
+Feel free to contribute by submitting a pull request or opening an issue!
 
 ---
 
