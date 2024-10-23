@@ -80,7 +80,7 @@ The repository is organized as follows:
 ├── recommender_new.ipynb              # Jupyter notebook containing all model experiments and development
 ├── .gitignore                         # Git ignore file
 ├── LICENSE                            # License information
-└── README.md                          # Project documentation (this file)
+└── README.md                          # Project documentation
 ```
 
 ---
