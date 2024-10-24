@@ -18,7 +18,7 @@ This hybrid system leverages the strengths of both collaborative and content-bas
 ## Key Achievements
 
 - **Collaborative Filtering** RMSE: **0.94**
-- **Content-Based Filtering** RMSE (LLM embeddings): **0.69**
+- **Content-Based Filtering** RMSE (LLM embeddings): **0.67**
 - Optional **LLaMA**-based review summarization for more granular recommendations.
 - Scalable data processing pipeline with dynamic dataset creation and storage.
 
@@ -64,7 +64,7 @@ The primary focus of this project is the `recommender_new.ipynb` notebook, which
    - Generating semantic embeddings from user reviews using a pre-trained **transformer model** (e.g., BERT or GPT).
    - Calculating similarities between books based on the textual content of reviews.
    - Recommendations are made by suggesting books that have similar content and sentiment to books the user has already rated.
-   - Evaluation using RMSE, achieving a significant improvement over collaborative filtering with an RMSE of **0.69**.
+   - Evaluation using RMSE, achieving a significant improvement over collaborative filtering with an RMSE of **0.67**.
 
 ### 4. **Hybrid Model**
    - Combining the collaborative filtering model with content-based filtering to create a hybrid recommender system.
