@@ -187,14 +187,6 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Contributors
 
-- **MoNorouzi23** - [GitHub Profile](https://github.com/MoNorouzi23)
-
-Feel free to contribute by submitting a pull request or opening an issue!
-
----
-
-## Contributors
-
 - **Mohammad Norouzi** - [GitHub Profile](https://github.com/MoNorouzi23)
 - **Atabak Alishiri** - [GitHub Profile](https://github.com/atabak-alishiri)
 
